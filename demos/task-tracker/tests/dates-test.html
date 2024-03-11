@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<title>Date format test</title>
+<script src="../js/autosync.js"></script>
+<style type="text/css">
+
+body > div {
+   font-family: Arial;
+   font-size: 17px;
+}
+body > div > div {
+   margin: 2px;
+}
+
+</style>
+<script type="text/javascript">
+
+window.addEventListener('DOMContentLoaded', function() {
+
+var timezone = 3
+
+window.data = {
+   tasks: [{
+      user_id: 1,
+      user: 'Cody Fisher',
+      title: 'Create a new task',
+      description: 'Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.',
+      state_id: 1,
+      state: 'Assigned',
+      assigned_at: new Date(Date.parse('2021-08-04') - 3600 * timezone * 1000),
+      completed_at: null
+   },
+   {
+      user_id: 2,
+      user: 'Alex Cross',
+      title: 'Remove yourself as a watcher from a task. Sunt qui esse pariatur duis deserunt mollit dolore cillum minim tempor enim. Elit aute irure tempor cupidatat incididunt sint deserunt ut voluptate aute id deserunt nisi.',
+      description: 'Aliqua id fugiat nostrud irure ex duis ea quis id quis ad et. ',
+      state_id: 2,
+      state: 'In progress',
+      assigned_at: new Date(Date.parse('2021-08-02') - 3600 * timezone * 1000),
+      completed_at: null
+   },
+   {
+      user_id: 3,
+      user: 'Cameron Williamson',
+      title: 'Create a Doc view',
+      description: 'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.',
+      state_id: 3,
+      state: 'Complete',
+      assigned_at: new Date(Date.parse('2021-08-02') - 3600 * timezone * 1000),
+      completed_at: new Date(Date.parse('2021-08-03') - 3600 * timezone * 1000)
+   }],
+   users: [
+      { id: 1, name: 'Cody Fisher' },
+      { id: 2, name: 'Jenny Wilson' },
+      { id: 3, name: 'Cameron Williamson' }
+   ],
+   states: [
+      { id: 1, state: 'Assigned' },
+      { id: 2, state: 'In progress' },
+      { id: 3, state: 'Complete' }
+   ]
+}
+
+as.add('data')
+
+})
+
+</script>
+</head>
+<body>
+   <div asmodel="data.tasks" aslist>
+      <div>{$value['assigned_at']|'DD.MM.YYYY HH:mm:ss'}</div>
+   </div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+CREATE TABLE "states" (
+	"id"	INTEGER,
+	"state"	TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE TABLE "users" (
+	"id"	INTEGER,
+	"name"	TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE TABLE "tasks" (
+	"id"	INTEGER,
+	"title"	TEXT,
+	"description"	TEXT,
+	"user_id"	INTEGER,
+	"state_id"	INTEGER,
+	"assigned_at"	DATETIME,
+	"completed_at"	DATETIME,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<title>Task Tracker</title>
+<link rel="stylesheet" href="../css/main.css">
+<script src="../js/autosync.js"></script>
+<script type="text/javascript">
+
+window.fixture_data = {
+   tasks: [{
+      id: 1,
+      user_id: 1,
+      user: 'Cody Fisher',
+      title: 'Create a new task',
+      description: 'Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.',
+      state_id: 1,
+      state: 'Assigned',
+      assigned_at: '2021-08-04',
+      completed_at: null
+   },
+   {
+      id: 2,
+      user_id: 2,
+      user: 'Alex Cross',
+      title: 'Remove yourself as a watcher from a task. Sunt qui esse pariatur duis deserunt mollit dolore cillum minim tempor enim. Elit aute irure tempor cupidatat incididunt sint deserunt ut voluptate aute id deserunt nisi.',
+      description: 'Aliqua id fugiat nostrud irure ex duis ea quis id quis ad et.',
+      state_id: 2,
+      state: 'In progress',
+      assigned_at: '2021-08-02',
+      completed_at: null
+   },
+   {
+      id: 3,
+      user_id: 3,
+      user: 'Cameron Williamson',
+      title: 'Create a Doc view',
+      description: 'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.',
+      state_id: 3,
+      state: 'Complete',
+      assigned_at: '2021-08-02',
+      completed_at: '2021-08-03'
+   }],
+   users: [
+      { id: 1, name: 'Cody Fisher' },
+      { id: 2, name: 'Alex Cross' },
+      { id: 3, name: 'Cameron Williamson' }],
+   states: [
+      { id: 1, state: 'Assigned' },
+      { id: 2, state: 'In progress' },
+      { id: 3, state: 'Complete' }
+   ]
+}
+
+window.data = fixture_data
+
+window.addEventListener('DOMContentLoaded', function() {
+   initSelects()
+   document.querySelector('#sort select').onchange = function() {
+      sort = this.value
+      //loadData()
+   }
+   var btns = document.querySelectorAll('.modal .bottom button')
+   for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener('click', function() {
+         if (this.classList.contains('accent')) {
+            var form = document.querySelector("#create_form");
+            var req = new XMLHttpRequest()
+            req.open('POST', 'action.php?create', true)
+            req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+            req.onload = loadData
+            var data = new URLSearchParams(new FormData(form)).toString()
+            console.log(data)
+            req.send(data)
+         }
+         hideDialog(this.parentNode.parentNode)
+      })
+   }
+   document.addEventListener('click', function() {
+      var menu = document.querySelector('body > .menu')
+      menu.classList.remove('active')
+      menu.style.left = ''
+      menu.style.top = ''
+   })
+   document.querySelector('#create_tsk_btn').onclick = function() {
+      showDialog(document.querySelector('#create_task_dialog'))
+   }
+   
+   document.getElementById('task_list').addEventListener('DOMSubtreeModified', function () {
+      initSelects()
+   }, false)
+   
+   document.getElementById('task_list').style.opacity = '0'
+   
+   as.setAfter('data', updateItems)
+   as.add('data')
+   
+   //loadData()
+   
+   document.getElementById('task_list').style.opacity = ''
+   
+   setTimeout(function() {
+      var list = document.querySelector('#create_form .select_user select')
+      var opt = new Option('None', '0')
+      list.insertBefore(opt, list.firstElementChild)
+      list.value = 0
+      list.parentNode.children[0].children[1].innerHTML = 'None'
+   }, 100)
+   
+})
+
+var sort = 'assigned_at'
+var bounded = false
+
+function loadData() {
+   var req = new XMLHttpRequest()
+   req.open('GET', 'action.php?get&sort=' + sort, true)
+   req.onload = function() {
+   
+      // Need to do this data processing because we do not use an ORM and also because
+      // Autosync needs data from nested entities to be extracted onto the same level
+      var data = JSON.parse(this.responseText)
+      postProcessData(data)
+      console.log(data)
+   
+      window.data = data
+      
+      if (!bounded) {
+         // Or we can do it using the pre-hook:
+         // as.setBefore('data', postProcessData)
+         
+         as.setAfter('data', updateItems)
+         as.add('data')
+         
+         document.getElementById('task_list').style.opacity = '1'
+         bounded = true
+      }
+   }
+   req.send(null)
+}
+
+function postProcessData(data) {
+   for (i = 0; i < data.tasks.length; i++) {
+      var task = data.tasks[i]
+      task.user = task.user_id && task.user_id != '0' ? data.users.filter(function(el) { return el.id == task.user_id })[0].name : 'None'
+      task.state = data.states.filter(function(el) { return el.id == task.state_id })[0].state
+   }
+}
+
+function updateItems() {
+   if (data.tasks.length == 0) return
+   var items = document.getElementById('task_list').children
+   for (var i = 0; i < items.length; i++) {
+      if (!items[i].querySelector('.completed_at')) continue
+      var completed_at = items[i].querySelector('.completed_at')
+      if (completed_at.value != '') {
+         completed_at.readonly = true
+      }
+      
+      var assigned_at = items[i].querySelector('.assigned_at')
+      assigned_at.onchange = function() {
+         updateDataModel(this, 'assigned_at', this.value)
+      }
+      
+      var today = (new Date()).toLocaleDateString("ru").split('.')
+      today = today.reverse().join('-')
+      if (assigned_at.value < today && items[i].querySelector('.select_state').getAttribute('data-value') < 3) {
+         items[i].classList.add('urgent')
+      }
+      
+      if (items[i].querySelector('.select_state').getAttribute('data-value') == 3) {
+         items[i].querySelector('.select_state select').style.display = 'none'
+         items[i].querySelector('.select_user').classList.add('disabled')
+      }
+      
+      var select_user = items[i].querySelector('.select_user select')
+      select_user.onfocus = function() {
+         this.parentNode.classList.add('active')
+      }
+      select_user.onblur = function() {
+         this.parentNode.classList.remove('active')
+      }
+      
+      var btn = items[i].querySelector('.menu_button')
+      btn.addEventListener('click', function(event) {
+         
+         var menu = document.querySelector('body > .menu')
+         if (menu.classList.contains('active')) {
+            return
+         }
+         event.stopPropagation()
+         
+         menu.classList.add('active')
+         menu.style.left = pageXOffset + event.clientX - menu.clientWidth + 8 +  'px'
+         menu.style.top = pageYOffset + event.clientY + 17 + 'px'
+         
+         menu.task_id = parseInt(this.parentNode.getAttribute('data-id'))
+      })
+   }
+}
+
+function deleteTask() {
+   if (confirm('Are you sure?')) {
+      var menu = document.querySelector('body > .menu')
+      var task_id = menu.task_id
+      for (var i = 0; i < data.tasks.length; i++) {
+         if (data.tasks[i].id == task_id) {
+            data.tasks.splice(i, 1)
+            notifyTaskDeleted(task_id)
+            delete menu.task_id
+         }
+      }
+   }
+}
+
+function showDialog(el) {
+   el.style.display = 'block'
+   el.style.opacity = '1'
+}
+
+function hideDialog(el) {
+   el.style.opacity = ''
+   el.ontransitionend = function() {
+      this.style.display = ''
+      this.ontransitionend = null
+   }
+}
+
+function initSelects() {
+   var selects = document.querySelectorAll('.select select')
+   for (var i = 0; i < selects.length; i++) {
+      if (selects[i].handled) continue
+      if (selects[i].parentNode.hasAttribute('data-value')) {
+         selects[i].value = selects[i].parentNode.getAttribute('data-value')
+      }
+      selects[i].addEventListener('change', function() {
+         
+         var el = this.parentNode
+         el.setAttribute('data-value', this.value)
+         var field = el.getAttribute('data-param')
+         
+         if (el.parentNode.id != 'create_form') {
+            updateDataModel(el, field, this.value)
+         }
+         
+         if (field == 'state_id' && this.value == '3') {
+            this.style.display = 'none'
+         }
+
+         if (!el.children[0].classList.contains('user')) {
+            var index = el.children[0].classList.contains('hint') ? 1 : 0
+            el.children[index].innerHTML = this.options[this.selectedIndex].innerHTML
+         } else {
+            el.children[0].children[0].innerHTML = this.selectedIndex > 0 ? firstLetters(this.options[this.selectedIndex].innerHTML) : ''
+            el.children[0].children[1].innerHTML = this.options[this.selectedIndex].innerHTML
+         }
+      })
+      selects[i].handled = true
+   }
+}
+
+function updateDataModel(el, field, value) {
+   var _el = el
+   while (_el && !_el.classList.contains('task_item')) {
+      _el = _el.parentNode
+   }
+   if (_el && _el.hasAttribute('data-id')) {
+      var task_id = _el.getAttribute('data-id')
+      var task = data.tasks.find(function(el) { return el.id == task_id })
+      task[field] = value.match(/^[0-9]+$/) ? +value : value
+      if (field == 'user_id') task['user'] = data.users.find(function(el) { return el.id == value }).name
+      if (field == 'state_id') task['state'] = data.states.find(function(el) { return el.id == value }).state
+   }
+}
+
+function firstLetters(str) {
+   return str.split(/\s+/).map(function(s) { return s.slice(0,1).toUpperCase() }).join('')
+}
+
+//TODO: implement CSRF protection
+
+var csrf_token = ''
+
+</script>
+<style>
+.task_item > center {
+   width: 100%;
+   height: 98px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+</style>
+</head>
+<body>
+   <div id="top_nav">
+      <div class="wrap">
+         <div class="left">
+            <div class="create_task"><button id="create_tsk_btn" class="button accent">Create Task</button></div>
+            <div class="sort_wrap"><div class="select" id="sort">
+               <span class="hint">Sort by</span><span>Assigned at</span>
+               <select>
+                  <option value="assigned_at">Assigned at</option>
+                  <option value="completed_at">Completed at</option>
+                  <option value="user_name">User name</option>
+                  <option value="state">State</option>
+               </select>
+            </div>
+            </div>
+         </div>
+         <div class="right">
+            <div class="user">
+               <div class="avatar">AH</div>
+               <div class="name">Alex Hernandez</div>
+            </div>
+            <div class="logout"><button class="button logout">Logout</button></div>
+         </div>
+      </div>
+   </div>
+   <div id="wrap">
+      <div id="task_list" asmodel="data.tasks" aslist>
+         <div class="item task_item" as-onclick:stop="var id = this.dataset.id; console.log(value.find(function(el) { return el.id == id })._export())" asplaceholder="<center><em>Empty</em></center>" data-id="{$value['id']}">
+            <div class="select select_user" data-param="user_id" data-value="{$value['user_id']}">
+               <div class="user">
+                  <div class="avatar" astemplate="func:firstLetters($value['user'])">AA</div>
+                  <div class="name">{$value['user']}</div>
+               </div>
+               <select asif="$value['state_id'] < 3" asmodel="data.users" aslist>
+                  <option value="{$value['id']}">{$value['name']}</option>
+               </select>
+            </div>
+            <div class="title">{$value['title']}</div>
+            <div class="description" as-onclick:stop="alert(this.textContent)">{$value['description']}</div>
+            <div class="bottom">
+               <div class="left">
+                  <div class="select select_state" data-param="state_id" data-value="{$value['state_id']}">
+                     <span>{$value['state']}</span>
+                     <select asif="$value['state_id'] < 3" asmodel="data.states" aslist>
+                        <option value="{$value['id']}">{$value['state']}</option>
+                     </select>
+                  </div>
+               </div>
+               <div class="right">
+                  <input type="date" class="assigned_at" value="{$value['assigned_at']}">
+                  <input type="date" class="completed_at" value="{$value['completed_at']}" readonly>
+               </div>
+            </div>
+            <div class="menu_button"></div>
+         </div>
+      </div>
+   </div>
+   <div class="modal" id="create_task_dialog">
+      <div class="title">Create Task</div>
+      <div class="content">
+         <form id="create_form">
+            <textarea name="title" placeholder="Title" required></textarea>
+            <textarea name="description" placeholder="Description" required></textarea>
+            <div class="select select_user" data-param="user_id" data-value="{$value['user_id']}">
+               <div class="user">
+                  <div class="avatar" astemplate="func:firstLetters($value['user'])"></div>
+                  <div class="name"></div>
+               </div>
+               <select name="user_id" asmodel="data.users" aslist>
+                  <option value="{$value['id']}">{$value['name']}</option>
+               </select>
+            </div>
+            <input type="date" name="assigned_at" required>
+         </form>
+      </div>
+      <div class="bottom"><button class="button accent">Create</button><button class="button">Cancel</button></div>
+   </div>
+   <div class="menu">
+      <div class="item" onclick="deleteTask()">Delete</div>
+   </div>
+</body>
+</html>

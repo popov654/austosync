@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<title>Date format test</title>
+<script type="module" src="../src/index.js"></script>
+<style type="text/css">
+
+body > div {
+   font-family: Arial;
+   font-size: 17px;
+}
+body > div > div {
+   margin: 2px;
+}
+.contents {
+   margin-left: 28px;
+}
+
+</style>
+<script type="text/javascript">
+
+window.addEventListener('DOMContentLoaded', function() {
+
+var timezone = 3
+
+window.data = {
+   folders: [
+      {
+         name: 'root',
+         children: [
+            {
+               name: 'usr',
+               children: [
+                  {
+                     name: 'local',
+                     children: [
+                        {
+                           name: 'home',
+                           children: [
+                              
+                           ]
+                        }
+                     ]
+                  },
+                  {
+                     name: 'data',
+                     children: [
+                        
+                     ]
+                  },
+                  {
+                     name: 'misc',
+                     children: [
+                        
+                     ]
+                  }
+               ]
+            },
+            {
+               name: 'sys',
+               children: [
+                  
+               ]
+            },
+            {
+               name: 'tmp',
+               children: [
+                  
+               ]
+            },
+            {
+               name: 'var',
+               children: [
+                  
+               ]
+            },
+         ]
+      }
+   ]
+}
+
+as.add('data')
+
+})
+
+</script>
+</head>
+<body>
+   <div asmodel="data.folders" aslist>
+      <div class="item" asref="item">
+         <div class="title">{$value['name']}</div>
+         <div class="contents" asmodel=".children"><item></item></div>
+      </div>
+   </div>
+</body>
+</html>

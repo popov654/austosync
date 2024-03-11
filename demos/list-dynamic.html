@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Autosync</title>
+<script type="text/javascript" src="../autosync.js"></script>
+<script type="text/javascript">
+
+function getData() {
+   data = [ { id: 1, str: 'a' }, { id: 2, str: 'b' }, { id: 3, str: 'c' } ]
+}
+
+function getWord(n, word) {
+   if (isNaN(parseInt(n))) return ''
+   if (word == 'яблок') {
+      if (n % 10 == 0 || n % 10 > 4 || n >= 11 && n <= 19) return n + ' ' + word
+      else if (n % 10 > 1 && n % 10 <= 4) return n + ' ' + word + 'а'
+      else if (n % 10 == 1) return n + ' ' + word + 'о'
+   }
+   else if (word == 'апельсин') {
+      if (n % 10 == 0 || n % 10 > 4 || n >= 11 && n <= 19) return n + ' ' + word + 'ов'
+      else if (n % 10 > 1 && n % 10 <= 4) return n + ' ' + word + 'а'
+      else if (n % 10 == 1) return n + ' ' + word
+   }
+}
+
+function toggleField() {
+   field = (field == 'str') ? 'id' : 'str'
+   as.update('data')
+}
+
+function pushElement() {
+   data.push({ id: next_id, str: String.fromCharCode(String('a').charCodeAt(0) + next_id - 1) })
+   next_id++
+   document.getElementsByTagName('textarea')[0].style.height = Math.max(19 * data.length + 1, parseInt(document.getElementsByTagName('textarea')[0].style.height)) + 'px'
+}
+
+function init() {
+   Array.prototype.forEach.call(document.querySelectorAll('input[type="text"], textarea'), function(el) { el.value = '' })
+   getData()
+   as.add('data', 'window', null, true)
+}
+
+var next_id = 4
+var field = 'str'
+
+function handle(e) {
+   var t = e.target
+   if (t.tagName.toLowerCase() == 'span' && t == t.parentNode.lastChild) {
+      var index = t.parentNode.dataset.index
+      data.splice(index, 1)
+      document.getElementsByTagName('textarea')[0].style.height = (19 * data.length + 1) + 'px'
+   }
+}
+
+</script>
+<style>body, input, textarea { font-family: Tahoma; font-size: 15px; resize: none; vertical-align: top; } p { min-height: 20px; margin-top: 3px; } .list { font-size: 15px; border: 1px solid #dae2e6; border-radius: 2px; margin: 5px 0px; width: 90px; padding: 4px 3px; } .list > div { padding: 1px 3px; border-radius: 2px; } .list > div:hover { background: #eee; } .list > div span { display: none; color: #aaa; } .list > div:hover span { display: inline-block; float: right; margin-top: -1px; cursor: pointer; }</style>
+</head>
+
+<body onload="init()">
+   <div id="container">
+      <textarea type="text" asmodel="data" asjson readonly cols="20" style="height: 58px; overflow: hidden"></textarea> <button onclick="toggleField()">Change</button>
+      <div class="list" asmodel="data" aslist onclick="handle(event)"><div data-index="{$index}">{$value[field]}<span>x</span></div></div>
+      <button onclick="pushElement()">Add</button>
+   </div>
+</body>
+</html>

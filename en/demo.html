@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Autosync</title>
+<script type="text/javascript" src="autosync.js"></script>
+<script type="text/javascript">
+
+function getData1() {
+   data1 = { a: Math.round(Math.random() * 10), b: Math.round(Math.random() * 10), c: Math.round(Math.random() * 10) }
+}
+
+function getData2() {
+   data2 = { x: Math.round(Math.random() * 10), y: Math.round(Math.random() * 10), z: Math.round(Math.random() * 10) }
+}
+
+function getWord(n, word) {
+   if (isNaN(parseInt(n))) return ''
+   if (n != 1) return n + ' ' + word + 's'
+   return n + ' ' + word
+}
+
+function init() {
+   Array.prototype.forEach.call(document.querySelectorAll('input[type="text"], textarea'), function(el) { el.value = '' })
+   getData1(); getData2();
+   as.add('data1', 'window', null, true)
+   as.add('data2', 'window')
+}
+
+</script>
+<style>body, input, textarea { font-family: Tahoma; font-size: 15px; } p { min-height: 20px; margin-top: 3px; }</style>
+</head>
+
+<body onload="init()">
+   <div id="container1">
+      <input type="text" asmodel="data1" asjson /> <button onclick="getData1()">Update</button> <button onclick="as.remove('data1')">Remove</button>
+      <p><span asmodel="data1.a" astemplate="func:getWord($value,'apple')"></span></p>
+   </div>
+   <div id="container2">
+      <input type="text" asmodel="data2" asjson /> <button onclick="getData2()">Update</button> <button onclick="as.remove('data2')">Remove</button>
+      <p><span asmodel="data2.x" astemplate="func:getWord($value,'orange')"></span></p>
+   </div>
+</body>
+</html>

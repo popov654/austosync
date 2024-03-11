@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Autosync</title>
+<script type="text/javascript" src="../autosync.js"></script>
+<script type="text/javascript">
+
+function getData() {
+   data = [ { str: 'a' }, { str: 'b' }, { str: 'c' } ]
+}
+
+function getWord(n, word) {
+   if (isNaN(parseInt(n))) return ''
+   if (word == 'яблок') {
+      if (n % 10 == 0 || n % 10 > 4 || n >= 11 && n <= 19) return n + ' ' + word
+      else if (n % 10 > 1 && n % 10 <= 4) return n + ' ' + word + 'а'
+      else if (n % 10 == 1) return n + ' ' + word + 'о'
+   }
+   else if (word == 'апельсин') {
+      if (n % 10 == 0 || n % 10 > 4 || n >= 11 && n <= 19) return n + ' ' + word + 'ов'
+      else if (n % 10 > 1 && n % 10 <= 4) return n + ' ' + word + 'а'
+      else if (n % 10 == 1) return n + ' ' + word
+   }
+}
+
+function init() {
+   Array.prototype.forEach.call(document.querySelectorAll('input[type="text"], textarea'), function(el) { el.value = '' })
+   getData()
+   as.add('data', 'window', null, true)
+}
+
+</script>
+<style>body, input, textarea { font-family: Tahoma; font-size: 15px; resize: none; vertical-align: top; } p { min-height: 20px; margin-top: 3px; } .list { font-size: 15px; border: 1px solid #dae2e6; border-radius: 2px; margin: 5px 0px; width: 90px; padding: 4px; }</style>
+</head>
+
+<body onload="init()">
+   <div id="container">
+      <textarea type="text" asmodel="data" asjson readonly cols="30"></textarea>
+      <div class="list" asmodel="data" aslist><div>{$value['str']}</div></div>
+   </div>
+</body>
+</html>

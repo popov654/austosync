@@ -1,0 +1,339 @@
+body {
+   margin: 0;
+   background: #e5e5e5;
+   font-family: Arial;
+}
+button, .select {
+   font-size: 14px;
+   padding: 6px 12px;
+   background: #fff;
+   box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.03);
+   border-radius: 4px;
+   border: 1px solid #babfc3;
+   cursor: pointer;
+   margin: 3px;
+}
+button:hover {
+   background: #d2fff9;
+}
+button.accent {
+   color: #fff;
+   background: #008060;
+   border: 1px solid #008060;
+}
+button.accent:hover {
+   background: #008865;
+   border: 1px solid #008865;
+}
+#wrap {
+   max-width: 980px;
+   margin: 0px auto;
+   padding-top: 80px;
+}
+#top_nav {
+   position: fixed;
+   z-index: 100;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 48px;
+   background: #fff;
+   box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.05), 0px 0px 1px rgba(0, 0, 0, 0.25);
+}
+#top_nav > .wrap {
+   max-width: 1040px;
+   margin: 0px auto;
+}
+#top_nav .left {
+   float: left;
+}
+#top_nav .right {
+   float: right;
+   width: 270px;
+}
+#top_nav .left > *, #top_nav .right > * {
+   float: left;
+}
+.user {
+   padding: 7px 5px;
+}
+.user > div {
+   display: table-cell;
+   vertical-align: middle;
+}
+.avatar {
+   background: #91e0d6;
+   width: 32px;
+   height: 32px;
+   border-radius: 50%;
+   color: #222;
+   text-align: center;
+}
+.name {
+   padding-left: 10px;
+   font-size: 14px;
+}
+.left > *, .right > .logout {
+   height: 45px;
+   margin-left: 18px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+.left > .create_task {
+   margin-left: 0;
+}
+.select {
+   position: relative;
+   padding-right: 35px;
+   display: inline-block;
+   min-width: 140px;
+   max-width: 320px;
+}
+.select::after {
+   display: block;
+   content: '';
+   position: absolute;
+   top: 50%;
+   margin-top: -8px;
+   right: 3px;
+   width: 17px;
+   height: 17px;
+   background: url('../img/select_minor.svg') center center no-repeat;
+   background-size: 20px;
+   pointer-events: none;
+}
+.select .hint {
+   color: #555;
+   margin-right: 5px;
+}
+.select select {
+   box-sizing: border-box;
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   opacity: 0;
+}
+select > option {
+   font-size: 14px;
+}
+.modal {
+   display: none;
+   opacity: 0;
+   box-sizing: border-box;
+   padding: 17px 20px;
+   background: #fff;
+   border-radius: 5px;
+   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.13);
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   margin-left: -160px;
+   margin-top: -150px;
+   width: 320px;
+   height: 343px;
+   transistion: opacity 0.2s;
+}
+.modal > .title {
+   color: #222;
+}
+.modal > .content {
+   padding: 8px 0px;
+}
+.modal > .bottom {
+   position: absolute;
+   bottom: 6px;
+   right: 10px;
+   width: 100%;
+   text-align: right;
+}
+
+
+.task_item {
+   position: relative;
+   width: 100%;
+   margin: 0px 0px 10px;
+   padding: 10px 10px 16px;
+   background: #fff;
+   border-radius: 5px;
+   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.13);
+   min-height: 100px;
+   font-size: 14px;
+   color: #666;
+}
+.task_item.urgent {
+    background: #ffeded;
+}
+.task_item .menu_button {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    width: 24px;
+    height: 24px;
+    background: url('../img/dots.svg') center center no-repeat;
+    background-size: 16px;
+    opacity: 0.64;
+    cursor: pointer;
+}
+.task_item .menu_button:hover {
+    opacity: 0.75;
+}
+.task_item .title, .task_item .description {
+    margin: 3px 15px;
+}
+.task_item .title {
+   font-size: 15px;
+   color: #222;
+   font-weight: bold;
+   margin: 8px 15px 10px;
+}
+.select_user {
+   max-width: 250px;
+   min-width: 160px;
+   display: inline-block;
+   border: none;
+   box-shadow: none;
+   padding-right: 16px;
+   background: none;
+}
+.select_user:hover:not(.disabled), .select_user.active {
+    background: rgba(248, 248, 248, 0.3);
+    box-shadow: 1px 2px 3px 1px rgba(0, 0, 0, 0.13);
+}
+.select_user.disabled {
+    cursor: default;
+}
+.select_user.disabled::after {
+    display: none;
+}
+#create_form .select_user {
+    background: none;
+    border: 1px solid #dfdfdf;
+    margin: 4px 0px;
+    width: 100%;
+    color: #383838;
+}
+#create_form .select_user:hover, #create_form .select_user.active {
+    box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.13);
+}
+.select_user::after {
+    background: url('../img/caret_down_minor.svg') center center no-repeat;
+}
+.select_user .user {
+    padding: 0px 10px 0px 0px;
+}
+.select_user select {
+    height: calc(100% + 1px);
+}
+
+.item:nth-child(3n+1) .user .avatar {
+   background-color: #F0C5FF;
+}
+.item:nth-child(3n+2) .user .avatar {
+   background-color: #EFF9B3;
+}
+.item:nth-child(3n) .user .avatar {
+   background-color: #FFD1D1;
+}
+
+.select {
+    user-select: none;
+    -moz-user-select: none;
+}
+
+.select_state {
+    margin-left: 15px;
+}
+.select_state[data-value="1"] {
+    background: #EEF5F9;
+}
+.select_state[data-value="2"] {
+    background: #D8F1FF;
+}
+.select_state[data-value="3"] {
+    background: #BCF1EB;
+    cursor: default;
+}
+
+input[type="date"][readonly] {
+    cursor: default;
+}
+
+.task_item .bottom {
+    /* padding: 10px 14px; */
+    padding: 3px 0px;
+    width: 97%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+}
+.task_item .bottom .left,
+.task_item .bottom .right {
+    /* display: table-cell; */
+    vertical-align: middle;
+}
+.task_item .bottom .right {
+    text-align: right;
+}
+.task_item .bottom .select {
+    max-height: 15px;
+}
+input[type="date"] {
+    font-family: Arial;
+    font-size: 14px;
+    padding: 5px 8px;
+    color: #666;
+    border-radius: 5px;
+    border: 1px solid #c3c3c3;
+}
+
+#create_form textarea {
+    box-sizing: border-box;
+    font-size: 15px;
+    font-family: Arial;
+    height: 86px;
+    margin: 8px auto 3px;
+    padding: 4px 6px;
+    width: 100%;
+    resize: none;
+}
+#create_form [name="title"] {
+    height: 45px;
+}
+#create_form input {
+    box-sizing: border-box;
+    font-size: 15px;
+    width: 100%;
+    padding: 5px 7px;
+}
+
+body > .menu {
+    position: absolute;
+    opacity: 0;
+    width: 120px;
+    height: auto;
+    top: -200px;
+    left: -200px;
+    background: #ececec;
+    border: 1px solid #d3d3d3;
+    border-top: 1px solid #dedede;
+    border-left: 1px solid #dadada;
+    border-radius: 5px;
+    box-shadow: 1px 1.5px 3px 1px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+body > .menu > .item {
+    color: #222;
+    padding: 5px 12px 4px;
+    line-height: 17px;
+    font-size: 15px;
+    cursor: pointer;
+}
+body > .menu > .item:hover {
+    background: rgba(60, 76, 78, 0.1);
+}
+body > .menu.active {
+    opacity: 1;
+}

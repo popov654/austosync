@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Autosync</title>
+<script type="text/javascript" src="../autosync.js"></script>
+<script type="text/javascript">
+
+function getData1(data) {
+   data.data1 = { a: Math.round(Math.random() * 10), b: Math.round(Math.random() * 10), c: Math.round(Math.random() * 10) }
+}
+
+function getData2(data) {
+   data.data2 = { x: Math.round(Math.random() * 10), y: Math.round(Math.random() * 10), z: Math.round(Math.random() * 10) }
+}
+
+function getWord(n, word) {
+   if (isNaN(parseInt(n))) return ''
+   if (word == 'яблок') {
+      if (n % 10 == 0 || n % 10 > 4 || n >= 11 && n <= 19) return n + ' ' + word
+      else if (n % 10 > 1 && n % 10 <= 4) return n + ' ' + word + 'а'
+      else if (n % 10 == 1) return n + ' ' + word + 'о'
+   }
+   else if (word == 'апельсин') {
+      if (n % 10 == 0 || n % 10 > 4 || n >= 11 && n <= 19) return n + ' ' + word + 'ов'
+      else if (n % 10 > 1 && n % 10 <= 4) return n + ' ' + word + 'а'
+      else if (n % 10 == 1) return n + ' ' + word
+   }
+}
+
+function init() {
+   Array.prototype.forEach.call(document.querySelectorAll('input[type="text"], textarea'), function(el) { el.value = '' })
+   var btn = 
+   document.getElementById('container1').getElementsByTagName('button')[0]
+   btn.onclick = function() { getData1(data) }
+   var data = { data1: null, data2: null, getWord: getWord }
+   getData1(data); getData2(data);
+   as.add('data1', data, 'test')
+}
+
+</script>
+<style>body, input, textarea { font-family: Tahoma; font-size: 15px; } p { min-height: 20px; margin-top: 3px; }</style>
+</head>
+
+<body onload="init()">
+   <div id="container1">
+      <input type="text" asmodel="data1" askey="test" asjson /> <button>Update</button> <button onclick="as.remove('data1')">Remove</button>
+      <p><span asmodel="data1.a" askey="test" astemplate="func:getWord($value,'яблок')"></span></p>
+   </div>
+</body>
+</html>

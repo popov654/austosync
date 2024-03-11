@@ -1,0 +1,526 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta name="keywords" content="JS, JavaScript, data binding, library, framework" />
+<meta name="google-site-verification" content="BL0vfzW3EHPzinjTwJNGN9GF9uB9trBo8dTY338fkR4" />
+<meta content="img/logo2.png" property="vk:image" />
+<title>Autosync</title>
+<link rel="stylesheet" href="highlightjs/styles/codepen-embed.min.css">
+<script src="highlightjs/highlight.min.js"></script>
+<script type="text/javascript" src="autosync.js"></script>
+<style type="text/css">
+
+body {
+   font-family: Arial;
+   font-size: 17px;
+   line-height: 160%;
+   margin: 0;
+}
+a {
+   color: #309fc9;
+}
+a: visited {
+   color: #69bddd;
+}
+p {
+   margin: 1.5em 0;
+   max-width: 95%;
+}
+#navbar {
+   min-height: 50px;
+   background: #252c2f;
+   box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.2);
+   padding: 0px 8px;
+   color: #e5e5e5;
+}
+#navbar > .logo {
+   width: 48px;
+   height: 48px;
+   background: url("img/logo_dark_small.png") center center no-repeat;
+   background-size: contain;
+}
+#navbar > * {
+   display: table-cell;
+   vertical-align: top;
+   min-height: 48px;
+}
+.nav_items {
+   position: absolute;
+   top: 0;
+   right: 25px;
+   width: 360px;
+   text-align: right;
+}
+.nav_items > * {
+   display: inline-block;
+   vertical-align: top;
+   height: 30px;
+   padding: 10px 12px;
+   overflow: hidden;
+   position: relative;
+   text-align: left;
+   cursor: pointer;
+   line-height: 29px;
+}
+.nav_items > * > .list {
+   position: absolute;
+   top: 50px;
+   right: 0px;
+   background: #252d30;
+   min-width: 160px;
+   border-top: 1px solid #43464a;
+   margin-top: -1.5px;
+   border-radius: 0px 0px 3px 3px;
+}
+.list > * {
+   padding: 3px 10px;
+   font-size: 0.9em;
+   cursor: pointer;
+}
+.nav_items > *:hover {
+   overflow: visible;
+}
+.nav_items > *:hover, .nav_items .list > *:hover {
+   background: rgba(120, 120, 120, 0.3);
+}
+.nav_items a {
+   color: #e2e2e2;
+   text-decoration: none;
+   display: block;
+}
+#navbar > .title {
+   color: #fff;
+   text-decoration: none;
+   font-size: 24px;
+   font-weight: bold;
+   line-height: 28px;
+   margin-left: 12px;
+   vertical-align: middle;
+}
+@media (max-width: 380px) {
+   .nav_items {
+      position: absolute;
+      top: 0;
+      right: 0px;
+      width: 160px;
+   }
+   .nav_items > div:first-child {
+      display: none;
+   }
+   #navbar > .title {
+      font-size: 22px;
+      font-weight: normal;
+      line-height: 26px;
+   }
+   .list > * {
+      padding: 7px 13px;
+      font-size: 1em;
+   }
+}
+
+
+#container {
+   margin: 0px auto;
+   max-width: 1000px;
+}
+
+.section {
+   margin-bottom: 38px;
+}
+.section > .header {
+   font-family: "PT Serif Caption";
+   font-weight: bold;
+   font-size: 1.8em;
+}
+#top > .content > .logo {
+   margin-left: -20px;
+   display: table-cell;
+}
+.main_title {
+   font-size: 50px;
+   line-height: 54px;
+   display: table-cell;
+   vertical-align: middle;
+}
+@media (max-width: 480px) {
+   #top > .content > img {
+      margin-left: -35px !important;
+      width: auto;
+      margin-left: -45px;
+      max-height: 140px;
+      display: block;
+   }
+   .main_title {
+      font-size: 34px;
+      line-height: 38px;
+   }
+}
+@media (max-width: 480px) {
+   .main_title {
+      font-size: 32px;
+      line-height: 34px;
+   }
+}
+#downloads > .header {
+   margin-bottom: 38px;
+}
+.aside, .main {
+   display: table-cell;
+   vertical-align: top;
+}
+.aside {
+   width: 340px;
+   min-width: 340px;
+   display: none;
+}
+.main {
+   padding: 10px 30px;
+}
+.aside > .content {
+   margin-top: 24px;
+   background: #dde1e4;
+   min-height: 300px;
+}
+.section > .content {
+   margin: 12px 0px;
+   display: block;
+   height: auto;
+}
+.cell {
+   display: table-cell;
+   vertical-align: top;
+   padding: 2px 10px 2px 0px;
+}
+.cell:first-child {
+   min-width: 200px;
+}
+@media (max-width: 480px) {
+   .main {
+      display: block;
+   }
+   .cell {
+      display: block;
+   }
+   pre {
+      width: calc(100vw - 60px);
+      overflow-x: auto;
+   }
+}
+
+pre, code {
+   max-width: 860px;
+   font-family: Consolas, "Courier New", monospace;
+}
+pre {
+   background: #262626;
+   color: #fcfcfc;
+   padding: 3px 24px;
+}
+p > code {
+   padding: 1px 4px;
+   background: #d0e1dd;
+   border-radius: 2px;
+   margin-right: 2px;
+}
+pre code.hljs {
+   padding: 0 1em;
+}
+.nav.footer {
+   height: 60px;
+   padding-bottom: 20px;
+}
+@media (max-width: 480px) {
+   pre {
+      width: calc(100vw - 38px);
+      margin-left: -11px;
+      border-radius: 6px;
+   }
+   pre code.hljs {
+      padding: 0 0.75em;
+   }
+   
+}
+.nav > a {
+   display: block;
+   padding: 7px 12px;
+   color: #334a55;
+   text-decoration: none;
+   border-radius: 4px;
+   line-height: 28px;
+}
+.nav > a:hover {
+   background: #efefef;
+}
+.nav > a[disabled] {
+   visibility: hidden;
+}
+.nav > a:first-child {
+   float: left;
+}
+.nav > a.last-child {
+   float: right;
+}
+.nav > a > img {
+   display: inline-block;
+   position: relative;
+   top: 7px;
+   border: none;
+}
+.nav > a:first-child > img {
+   float: left;
+   margin-right: 4px;
+}
+.nav > a.last-child > img {
+   float: right;
+   margin-left: 4px;
+}
+@media (max-width: 480px) {
+   .footer {
+      padding: 0px 10px 18px;
+   }
+}
+@font-face {
+   font-family: "PT Serif Caption";
+   src: url('fonts/PTSerifCaption.ttf');
+}
+@font-face {
+   font-family: Consolas;
+   src: url('fonts/consolas.ttf');
+}
+
+.warning {
+   background: #f9d5d2;
+   border: 1px solid #a55757;
+   color: #513e3e;
+   padding: 20px 28px;
+   max-width: 850px;
+}
+.warning::before {
+   content: 'Важно!';
+   margin-right: 17px;
+   color: #893d3d;
+}
+.warning > code {
+   background: #faece8;
+   box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.23);
+}
+.info {
+   background: #fdf4d6;
+   border: 1px solid #928664;
+   color: #565148;
+   padding: 20px 28px;
+   max-width: 850px;
+}
+.info > code {
+   background: #fbf8ef;
+   box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.32);
+}
+
+#lang {
+   position: absolute;
+   top: 0;
+   right: 265px;
+   width: 30px;
+   text-align: left;
+   padding: 8px;
+   font-size: 14px;
+   cursor: pointer;
+   box-sizing: border-box;
+   width: 70px;
+   height: 56px;
+   z-index: 1;
+}
+#lang > div:first-child {
+   padding: 5px 3px 3px;
+   margin-top: -2px;
+   line-height: 26px;
+   text-align: center;
+   border-radius: 3px;
+   border: 1px solid transparent;
+   display: inline-block;
+}
+#lang:hover > div:first-child {
+   box-shadow: inset 0px 0px 7px 2px rgba(30, 30, 30, 0.25);
+   border: 1px solid rgba(130, 130, 130, 0.45);
+   background: linear-gradient(to bottom, rgba(130, 134, 136, 0.38) 0%, rgba(130, 136, 136, 0.60) 50%, rgba(132, 132, 132, 0.53) 100%);
+   color: #eaeaea;
+   text-shadow: 0px 1.3px rgba(47, 42, 48, 0.68), 1px -0.5px rgba(47, 42, 48, 0.18);
+}
+#lang .list {
+   position: relative;
+   top: 13px;
+   height: 0px;
+   background: #ededed;
+   border: 1px solid #a6a6a6;
+   border-radius: 5px;
+   color: #333;
+   overflow: hidden;
+   border: none;
+}
+#lang .list > div:hover {
+   background: rgba(132, 132, 134, 0.23);
+}
+#lang:hover > .list {
+   width: 80px;
+   height: auto;
+   border: 1px solid #a6a6a6;
+}
+
+</style>
+<script type="text/javascript">
+
+if (!Array.prototype['forEach']) {
+   Array.prototype.forEach = function(callback, thisArg) {
+      if (this == null) { throw new TypeError('Array.prototype.forEach called on null or undefined'); } 
+      var T, k;
+      var O = Object(this);
+      var len = O.length >>> 0;
+      if (typeof callback !== "function") { throw new TypeError(callback + ' is not a function'); }
+      if (arguments.length > 1) T = thisArg;
+      k = 0;
+      while (k < len) {
+         var kValue;
+         if (k in O) {
+            kValue = O[k];
+            callback.call(T, kValue, k, O);
+         }
+         k++;
+      }
+   }
+}
+
+if (!('firstElementChild' in Element.prototype) && Object['defineProperty']) {
+   Object.defineProperty(Element.prototype, 'firstElementChild', {
+      get: function() {
+         return this.children[0]
+      }
+   });
+   Object.defineProperty(Element.prototype, 'lastElementChild', {
+      get: function() {
+         return this.children[this.children.length-1]
+      }
+   });
+}
+
+var current_index = 0
+
+var links = []
+
+function getContents() {
+   var a = document.getElementById('nav').getElementsByTagName('a')
+   for (var i = 0; i < a.length; i++) {
+      links.push({ url: a[i].href + (i > 0 ? '#downloads' : ''), title: a[i].innerHTML })
+   }
+   
+   try {
+      var title = document.getElementById('intro').children[0].innerHTML
+      for (var i = 0; i < links.length; i++) {
+         if (links[i].title == title) {
+            current_index = i
+            break
+         }
+      }
+   } catch(ex) {}
+   
+   var b = document.getElementById('footer').getElementsByTagName('a')
+   
+   b[0].href = current_index > 0 ? links[current_index-1].url : ''
+   if (current_index > 0) b[0].childNodes[1].nodeValue = links[current_index-1].title
+   
+   b[1].href = current_index < links.length-1 ? links[current_index+1].url : ''
+   if (current_index < links.length-1) b[1].childNodes[1].nodeValue = links[current_index+1].title
+   
+   if (current_index == 0) {
+      b[0].setAttribute('disabled', '')
+   }
+   if (current_index == links.length-1) {
+      b[1].setAttribute('disabled', '')
+   }
+}
+
+function initLangs() {
+   var list = document.getElementById('lang').lastElementChild
+   Array.prototype.forEach.call(list.children, function(el) {
+      el.onclick = function() {
+         var lang = list.previousElementSibling.innerHTML.trim()
+         var str = this.innerHTML.trim()
+         if (str == lang) return
+         var p = location.href.split('/')
+         lang = p[p.length-2]
+         if (lang.length != 2) {
+            p.splice(p.length-1, 0, 'ru')
+         }
+         p[p.length-2] = str.toLowerCase()
+         location.href = p.join('/')
+      }
+   })
+}
+
+function init() {
+   try { hljs.highlightAll(); document.getElementsByTagName('style')[0].textContent += 'pre {\n   background: #222;\n   padding: 0px 12px;\n}\n' } catch (ex) {}
+   getContents();
+   initLangs();
+}
+
+</script>
+</head>
+
+<body onload="init()">
+   <div id="navbar"><div class="logo"></div><a href="index.html" class="title">Autosync</a>
+      <div id="lang"><div>EN</div><div class="list"><div>EN</div><div>RU</div></div></div>
+      <div class="nav_items" id="nav"><div><a href="index.html">Main</a></div><div>Functions<div class="list"><div class="item"><a href="contexts.html">Contexts</a></div><div class="item"><a href="templates.html">Templates</a></div><div class="item"><a href="dates.html">Working with dates</a></div><div class="item"><a href="dynamic-css.html">Dynamic styles</a></div><div class="item"><a href="events.html">Events</a></div><div class="item"><a href="embeds.html">Embeds</a></div><div class="item"><a href="components.html">Components</a></div><div class="item"><a href="hooks.html">Hooks</a></div><div class="item"><a href="pulling-data.html">Two-way binding</a></div></div></div><div><a href="api.html">API</a></div></div>
+   </div>
+   <div id="container">
+      <div class="aside">
+         <div class="content">
+         </div>
+      </div>
+      <div class="main">
+         <div class="section" id="top">
+            <div class="content" style="display: flex; align-items: center">
+               <div class="logo"><img src="img/logo.png" width="270" style="fit-content-width: 200px; margin-right: 10px" /></div><div class="main_title">Autosync<div style="font-size: 16px; line-height: 18px; margin-top: 5px">work with data, not with DOM</div></div>
+            </div>
+         </div>
+         <div class="section" id="downloads">
+            <div class="header">Download</div>
+            <div class="content">
+               <div><span class="cell"><a href="autosync.js" download>autosync.js</a></span><span class="cell">Standard version: IE 9+, Firefox 4.0+, Opera 12.1+, Chrome 5.0+</span></div>
+               <div><span class="cell"><a href="autosync-compat.js" download>autosync-compat.js</a></span><span class="cell">Extended version: IE 6+, Firefox 1.0+, Opera 8.0+</span></div>
+            </div>
+         </div>
+         <div class="section" id="intro">
+            <div class="header">Two-way binding</div>
+            <div class="content">
+               <p>Autosync does not perform automatic 2-way binding intentionally in order to give you maximum freedom to choose when to make a backward synchronization. For this operation the <code>pull</code> method is provided. Its first two arguments are the model and the context, just like in the <code>add</code> method. The third <code>update</code> argument tells Autosync whether it needs to update all HTML elements with an appropriate combination of <code>model, scope, key</code> attributes. The <code>key</code> is passed as the fifth argument. The fourth argument <code>url</code> allow to send the new value of <code>model</code> to the server in background using POST (field <code>data</code>). Object and array serialization before sending is performed automatically.</p>
+               <pre><code class="language-javascript">
+as.pull('profile_data', data, false, '/api/user.php?update')
+               </code></pre>
+            </div>
+         </div>
+         <div class="section" id="atomic-mode">
+            <div class="header">Atomic update mode</div>
+            <div class="content">
+               <p>Let's assume you output the full JSON representation of your model into some object for debugging purposes. In such a case you need that after any data update in child objects your element would update itself. However, parent models do not trigger an update of their elements on child models' changes by default. To change this behavior you need to pass <code>atomic</code> parameter into the add method:</p>
+               <pre><code class="language-javascript">
+as.add('user.profile_data', data, 'profile', true)
+               </code></pre>
+               <p>This allows to update elements with <code>asmodel="user.profile_data"</code> and <code>asmodelkey="profile"</code> when  any nested value inside <code>user.profile_data</code> changes, and not only on the explicit object reassign.</p>
+            </div>
+         </div>
+         <div class="section" id="json-parsing">
+            <div class="header">JSON parsing</div>
+            <div class="content">
+               <p>Sometimes you might need to get the object into the model from its string JSON representation in an input field (e.g. for debugging purposes). In this case you should set <code>asjson</code> attribute on the corresponding element:</p>
+               <pre><code class="language-html">
+&lt;textarea asmodel="user.profile_data" key="profile" asjson&gt;&lt;/textarea&gt;
+               </code></pre>
+               <p class="info">If elements with this attribute set and the appropriate <code>asmodel</code> attribute value are present in the document, the <code>atomic</code> value for the model will be automatically set to <code>true</code> on initialization, so you don't have to pass it explicitly in this situation.</p>
+            </div>
+         </div>
+      </div>
+      <div class="nav footer" id="footer"><a href=""><img src="img/prev.png" width="14" height="14">Back</a><a class="last-child" href=""><img src="img/next.png" width="14" height="14">Next</a></div>
+   </div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+RewriteEngine On
+
+RewriteBase /autosync
+
+RewriteCond %{HTTP_USER_AGENT} "MSIE [5-8]"
+RewriteRule ^(.*) - [e=COMPAT:1]
+
+RewriteCond %{REQUEST_URI} ^/autosync/(compat/)?([a-z]{2})/.*
+RewriteCond %{ENV:PREFER_LANG} !^ru$
+# define an environmental variable PREFER_LANG
+RewriteRule ^(.*)$ - [e=PREFER_LANG:%1]
+
+RewriteCond %{HTTP:Accept-Language} ^([a-z]{2}) [NC]
+RewriteCond %{ENV:PREFER_LANG} !^ru$
+RewriteCond %{REQUEST_URI} !^/autosync/(compat/)?[a-z]{2}/.*
+RewriteRule ^(.*)$ - [e=PREFER_LANG:%1]
+
+RewriteCond %{HTTP:Accept-Language} !(^ru) [NC]
+RewriteCond %{ENV:PREFER_LANG} !^ru$
+RewriteCond %{REQUEST_URI} !^/autosync/(compat/)?[a-z]{2}/.*
+RewriteCond %{REQUEST_FILENAME} \.html$ [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_FILENAME} !.(js|eot|ttf|png)$
+RewriteRule ^(.*) en/$1 [R]
+
+RewriteCond %{ENV:COMPAT} ^1$
+RewriteCond %{REQUEST_URI} !^/autosync/compat/.*
+RewriteCond %{REQUEST_FILENAME} !.(js|eot|ttf|png)$
+RewriteRule ^(.*) compat/$1 [R]
+
+RewriteRule ^(compat/|[a-z]{2}/|compat/[a-z]{2})(highlightjs|img|fonts)/(.*) $2/$3 [R]
+RewriteRule ^(compat/|[a-z]{2}/|compat/[a-z]{2})(.*).js $2.js [R]
+
+RewriteCond %{HTTP:Accept-Language} ^ru [NC]
+RewriteCond %{ENV:PREFER_LANG} !^(de|es|fr|it|ja|ru|en)$
+RewriteRule ^ru/(.*) $1 [R]
+

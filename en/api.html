@@ -1,0 +1,658 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta name="keywords" content="JS, JavaScript, data binding, library, framework" />
+<meta name="google-site-verification" content="BL0vfzW3EHPzinjTwJNGN9GF9uB9trBo8dTY338fkR4" />
+<meta content="img/logo2.png" property="vk:image" />
+<title>Autosync</title>
+<link rel="stylesheet" href="highlightjs/styles/codepen-embed.min.css">
+<script src="highlightjs/highlight.min.js"></script>
+<script type="text/javascript" src="autosync.js"></script>
+<style type="text/css">
+
+body {
+   font-family: Arial;
+   font-size: 17px;
+   line-height: 160%;
+   margin: 0;
+}
+a {
+   color: #309fc9;
+}
+a: visited {
+   color: #69bddd;
+}
+p {
+   margin: 1.5em 0;
+   max-width: 95%;
+}
+#navbar {
+   min-height: 50px;
+   background: #252c2f;
+   box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.2);
+   padding: 0px 8px;
+   color: #e5e5e5;
+}
+#navbar > .logo {
+   width: 48px;
+   height: 48px;
+   background: url("img/logo_dark_small.png") center center no-repeat;
+   background-size: contain;
+}
+#navbar > * {
+   display: table-cell;
+   vertical-align: top;
+   min-height: 48px;
+}
+.nav_items {
+   position: absolute;
+   top: 0;
+   right: 25px;
+   width: 360px;
+   text-align: right;
+}
+.nav_items > * {
+   display: inline-block;
+   vertical-align: top;
+   height: 30px;
+   padding: 10px 12px;
+   overflow: hidden;
+   position: relative;
+   text-align: left;
+   cursor: pointer;
+   line-height: 29px;
+}
+.nav_items > * > .list {
+   position: absolute;
+   top: 50px;
+   right: 0px;
+   background: #252d30;
+   min-width: 160px;
+   border-top: 1px solid #43464a;
+   margin-top: -1.5px;
+   border-radius: 0px 0px 3px 3px;
+}
+.list > * {
+   padding: 3px 10px;
+   font-size: 0.9em;
+   cursor: pointer;
+}
+.nav_items > *:hover {
+   overflow: visible;
+}
+.nav_items > *:hover, .nav_items .list > *:hover {
+   background: rgba(120, 120, 120, 0.3);
+}
+.nav_items a {
+   color: #e2e2e2;
+   text-decoration: none;
+   display: block;
+}
+#navbar > .title {
+   color: #fff;
+   text-decoration: none;
+   font-size: 24px;
+   font-weight: bold;
+   line-height: 28px;
+   margin-left: 12px;
+   vertical-align: middle;
+}
+@media (max-width: 380px) {
+   .nav_items {
+      position: absolute;
+      top: 0;
+      right: 0px;
+      width: 160px;
+   }
+   .nav_items > div:first-child {
+      display: none;
+   }
+   #navbar > .title {
+      font-size: 22px;
+      font-weight: normal;
+      line-height: 26px;
+   }
+   .list > * {
+      padding: 7px 13px;
+      font-size: 1em;
+   }
+}
+
+
+#container {
+   margin: 0px auto;
+   max-width: 1000px;
+}
+
+section {
+   margin-bottom: 38px;
+}
+section > header {
+   font-family: "PT Serif Caption";
+   font-weight: bold;
+   font-size: 1.8em;
+}
+#top > content > img {
+   margin-left: -20px;
+}
+.main_title {
+   font-size: 50px;
+   line-height: 54px;
+}
+@media (max-width: 480px) {
+   #top > content > img {
+      margin-left: -35px !important;
+      width: auto;
+      margin-left: -45px;
+      max-height: 140px;
+      display: block;
+   }
+   .main_title {
+      font-size: 34px;
+      line-height: 38px;
+   }
+}
+@media (max-width: 480px) {
+   .main_title {
+      font-size: 32px;
+      line-height: 34px;
+   }
+}
+#downloads > header {
+   margin-bottom: 38px;
+}
+aside, article {
+   display: table-cell;
+   vertical-align: top;
+}
+aside {
+   width: 340px;
+   min-width: 340px;
+   display: none;
+}
+article {
+   padding: 10px 30px;
+}
+aside > .content {
+   margin-top: 24px;
+   background: #dde1e4;
+   min-height: 300px;
+}
+section > content {
+   margin: 12px 0px;
+   display: block;
+   height: auto;
+}
+.cell {
+   display: table-cell;
+   vertical-align: top;
+   padding: 2px 10px 2px 0px;
+}
+.cell:first-child {
+   min-width: 200px;
+}
+@media (max-width: 480px) {
+   article {
+      display: block;
+   }
+   .cell {
+      display: block;
+   }
+   pre {
+      width: calc(100vw - 60px);
+      overflow-x: auto;
+   }
+}
+
+pre, code {
+   max-width: 860px;
+   font-family: Consolas, "Courier New", monospace;
+}
+p > code {
+   padding: 1px 4px;
+   background: #d0e1dd;
+   border-radius: 2px;
+   margin-right: 2px;
+}
+pre code.hljs {
+   padding: 0 1em;
+}
+nav.footer {
+   height: 60px;
+   padding-bottom: 20px;
+}
+@media (max-width: 480px) {
+   pre {
+      width: calc(100vw - 38px);
+      margin-left: -11px;
+      border-radius: 6px;
+   }
+   pre code.hljs {
+      padding: 0 0.75em;
+   }
+   
+}
+nav > a {
+   display: block;
+   padding: 7px 12px;
+   color: #334a55;
+   text-decoration: none;
+   border-radius: 4px;
+   line-height: 28px;
+}
+nav > a:hover {
+   background: #efefef;
+}
+nav > a[disabled] {
+   visibility: hidden;
+}
+nav > a:first-child {
+   float: left;
+}
+nav > a:last-child {
+   float: right;
+}
+nav > a:first-child::before {
+   display: inline-block;
+   content: '<';
+   color: transparent;
+   background: url('img/prev.png') center center no-repeat;
+   width: 16px;
+   height: 16px;
+   background-size: contain;
+   margin-right: 8px;
+   position: relative;
+   top: 6px;
+}
+nav > a:first-child::after {
+   content: '';
+}
+nav > a:last-child::before {
+   content: '';
+}
+nav > a:last-child::after {
+   display: inline-block;
+   content: '>';
+   color: transparent;
+   background: url('img/next.png') center center no-repeat;
+   width: 16px;
+   height: 16px;
+   background-size: contain;
+   margin-left: 8px;
+   position: relative;
+   top: 6px;
+}
+@media (max-width: 480px) {
+   .footer {
+      padding: 0px 10px 18px;
+   }
+}
+content > h1 {
+   margin-top: 36px;
+}
+content > div {
+   margin: 10px auto;
+}
+
+dt {
+   margin: 8px 0px 7px;
+   font-family: Consolas;
+}
+dd > div::before {
+   content: 'Type:';
+   font-style: italic;
+   font-family: Consolas;
+   font-size: 18px;
+   margin-right: 6px;
+}
+div.attribute dd > div {
+   margin-top: 6px;
+}
+div.method {
+   margin: 36px auto 54px;
+   position: relative;
+}
+div.attribute {
+   margin: 30px auto 48px;
+   position: relative;
+}
+div.attribute:hover::before,
+div.method:hover::before {
+   display: block;
+   content: '';
+   position: absolute;
+   top: -10px;
+   left: -28px;
+   bottom: -15px;
+   width: 0px;
+   border-left: 3px solid #2893c7;
+}
+div.method p {
+   margin-bottom: 34px;
+}
+div.code {
+   font-family: Consolas;
+   margin-bottom: 8px;
+}
+@font-face {
+   font-family: "PT Serif Caption";
+   src: url('fonts/PTSerifCaption.ttf');
+}
+@font-face {
+   font-family: Consolas;
+   src: url('fonts/consolas.ttf');
+}
+
+#lang {
+   position: absolute;
+   top: 0;
+   right: 265px;
+   width: 30px;
+   text-align: left;
+   padding: 8px;
+   font-size: 14px;
+   cursor: pointer;
+   box-sizing: border-box;
+   width: 70px;
+   height: 56px;
+   z-index: 1;
+}
+#lang > div:first-child {
+   padding: 5px 3px 3px;
+   margin-top: -2px;
+   line-height: 26px;
+   text-align: center;
+   border-radius: 3px;
+   border: 1px solid transparent;
+   display: inline-block;
+}
+#lang:hover > div:first-child {
+   box-shadow: inset 0px 0px 7px 2px rgba(30, 30, 30, 0.25);
+   border: 1px solid rgba(130, 130, 130, 0.45);
+   background: linear-gradient(to bottom, rgba(130, 134, 136, 0.38) 0%, rgba(130, 136, 136, 0.60) 50%, rgba(132, 132, 132, 0.53) 100%);
+   color: #eaeaea;
+   text-shadow: 0px 1.3px rgba(47, 42, 48, 0.68), 1px -0.5px rgba(47, 42, 48, 0.18);
+}
+#lang .list {
+   position: relative;
+   top: 13px;
+   height: 0px;
+   background: #ededed;
+   border: 1px solid #a6a6a6;
+   border-radius: 5px;
+   color: #333;
+   overflow: hidden;
+   border: none;
+}
+#lang .list > div:hover {
+   background: rgba(132, 132, 134, 0.23);
+}
+#lang:hover > .list {
+   width: 80px;
+   height: auto;
+   border: 1px solid #a6a6a6;
+}
+
+</style>
+<script type="text/javascript">
+
+var current_index = 0
+
+var links = []
+
+function getContents() {
+   var a = document.getElementById('nav').getElementsByTagName('a')
+   for (var i = 0; i < a.length; i++) {
+      links.push({ url: a[i].href + (i > 0 ? '#downloads' : ''), title: a[i].innerHTML })
+   }
+   
+   try {
+      var title = document.getElementById('intro').getElementsByTagName('header')[0].innerHTML
+      for (var i = 0; i < links.length; i++) {
+         if (links[i].title == title) {
+            current_index = i
+            break
+         }
+      }
+   } catch(ex) {}
+   
+   var b = document.getElementById('footer').getElementsByTagName('a')
+   
+   b[0].href = current_index > 0 ? links[current_index-1].url : ''
+   if (current_index > 0) b[0].innerHTML = links[current_index-1].title
+   
+   b[1].href = current_index < links.length-1 ? links[current_index+1].url : ''
+   if (current_index < links.length-1) b[1].innerHTML = links[current_index+1].title
+   
+   if (current_index == 0) {
+      b[0].setAttribute('disabled', '')
+   }
+   if (current_index == links.length-1) {
+      b[1].setAttribute('disabled', '')
+   }
+}
+
+function initLangs() {
+   var list = document.getElementById('lang').lastElementChild
+   Array.prototype.forEach.call(list.children, function(el) {
+      el.onclick = function() {
+         var lang = list.previousElementSibling.innerHTML.trim()
+         var str = this.innerHTML.trim()
+         if (str == lang) return
+         var p = location.href.split('/')
+         lang = p[p.length-2]
+         if (lang.length != 2) {
+            p.splice(p.length-1, 0, 'ru')
+         }
+         p[p.length-2] = str.toLowerCase()
+         location.href = p.join('/')
+      }
+   })
+}
+
+function init() {
+   hljs.highlightAll();
+   getContents();
+   initLangs();
+}
+
+</script>
+</head>
+
+<body onload="init()">
+   <div id="navbar"><div class="logo"></div><a href="index.html" class="title">Autosync</a>
+      <div id="lang"><div>EN</div><div class="list"><div>EN</div><div>RU</div></div></div>
+      <div class="nav_items" id="nav"><div><a href="index.html">Main</a></div><div>Functions<div class="list"><div class="item"><a href="contexts.html">Contexts</a></div><div class="item"><a href="templates.html">Templates</a></div><div class="item"><a href="dates.html">Working with dates</a></div><div class="item"><a href="dynamic-css.html">Dynamic styles</a></div><div class="item"><a href="events.html">Events</a></div><div class="item"><a href="embeds.html">Embeds</a></div><div class="item"><a href="components.html">Components</a></div><div class="item"><a href="hooks.html">Hooks</a></div><div class="item"><a href="pulling-data.html">Two-way binding</a></div></div></div><div><a href="api.html">API</a></div></div>
+   </div>
+   <div id="container">
+      <aside>
+         <div class="content">
+         </div>
+      </aside>
+      <article>
+         <section id="top">
+            <content style="display: flex; align-items: center">
+               <img src="img/logo.png" width="270" style="fit-content-width: 200px; margin-right: 10px" /><div class="main_title">Autosync<div style="font-size: 16px; line-height: 18px; margin-top: 5px">work with data, not with DOM</div></div>
+            </content>
+         </section>
+         <section id="downloads">
+            <header>Download</header>
+            <content>
+               <div><span class="cell"><a href="autosync.js" download>autosync.js</a></span><span class="cell">Standard version: IE 9+, Firefox 4.0+, Opera 12.1+, Chrome 5.0+</span></div>
+               <div><span class="cell"><a href="autosync-compat.js" download>autosync-compat.js</a></span><span class="cell">Extended version: IE 6+, Firefox 1.0+, Opera 8.0+</span></div>
+            </content>
+         </section>
+         <section id="intro">
+            <header>API</header>
+            <content>
+               <h1>Attributes</h1>
+               <div class="attribute">
+                  <dt>asmodel</dt>
+                  <dd>Path toi the model relative to its context<div>string</div></dd>
+               </div>
+               <div class="attribute">
+                  <dt>asscope</dt>
+                  <dd>The context (parent object of the model)<div>string</div></dd>
+               </div>
+               <div class="attribute">
+                  <dt>asmodelkey</dt>
+                  <dd>Model key<div>string</div></dd>
+               </div>
+               <div class="attribute">
+                  <dt>astemplate</dt>
+                  <dd>The template<div>string with references to model object's fields in <code>{$value['field']}</code> format</div></dd>
+               </div>
+               <div class="attribute">
+                  <dt>aslist</dt>
+                  <dd>Flag telling Autosync that the template should be applied to each element of the collection (the model must be a collection, i.e. сcontain integer fields and an integer <code>length</code> field). Also sets the first and the last element to output as the range<div>None or string in <code>"number1:number2"</code> format</div></dd>
+               </div>
+               <div class="attribute">
+                  <dt>asjson</dt>
+                  <dd>Flag telling Autosync that the <code>pull</code> method must parse the element value from the JSON string (the pull method only works for <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements)<br>Can take special values <code>"pretty"</code>, <code>"pretty:&lt;n&gt;"</code> or <code>"pretty:&lt;str&gt;"</code> for pretty JSON output, where <code>n</code> is the width of each level indentation in spaces, and <code>str</code> is an arbitrary prefix for each indentation level.<div>None or string</div></dd>
+               </div>
+               <div class="attribute">
+                  <dt>asplaceholder</dt>
+                  <dd>Placeholder HTML or CSS selector of the element with the placeholder inside it<div>HTML string or string in the <code style="margin: 0px 4px">$([&nbsp;selector&nbsp;])</code> format, where <code style="margin: 0px 4px">[ selector ]</code> is a valid CSS selector</div></dd>
+               </div>
+               <div class="attribute">
+                  <dt>asif</dt>
+                  <dd>Element output condition in JS code (special variables <code>$value</code>, <code>$index</code>, <code>$now</code> are supported)</dd>
+               </div>
+               <div class="attribute">
+                  <dt>asclasses</dt>
+                  <dd>CSS class lists to add to the element based on the truthiness of condition in <code style="margin: 0px 8px">[&nbsp;cond&nbsp;] ? [&nbsp;list1&nbsp;] | [&nbsp;list2&nbsp;]</code> or <code style="margin: 0px 8px">[&nbsp;cond&nbsp;] ? [&nbsp;list1&nbsp;]</code> format</dd>
+               </div>
+               <div class="attribute">
+                  <dt>asstyles</dt>
+                  <dd>CSS rules lists to add to the element based on the truthiness of condition in <code style="margin: 0px 8px">[&nbsp;cond&nbsp;] ? [&nbsp;list1&nbsp;] | [&nbsp;list2&nbsp;]</code> or <code style="margin: 0px 8px">[&nbsp;cond&nbsp;] ? [&nbsp;list1&nbsp;]</code> format</dd>
+               </div>
+               <div class="attribute">
+                  <dt>asattrs</dt>
+                  <dd>Attribute lists to add to the element based on the truthiness of condition in <code style="margin: 0px 8px">[&nbsp;cond&nbsp;] ? [&nbsp;list1&nbsp;] | [&nbsp;list2&nbsp;]</code> or <code style="margin: 0px 8px">[&nbsp;cond&nbsp;] ? [&nbsp;list1&nbsp;]</code> format</dd>
+               </div>
+               <div class="attribute">
+                  <dt>as-on*</dt>
+                  <dd>Event handler. Inside the handler the special variables <code>event</code>, <code>value</code>, <code>scope</code>, <code>index</code> are available (if <code>value</code> is not an element inside a collection, then <code>index</code> is -1)</code></dd>
+               </div>
+               <h1>Methods</h1>
+               <div class="method">
+                  <div class="code">as.add(model [, scope] [, key] [, atomic] [, value])</div>
+                  <div><p>Register an object as a model</p>
+                     <div>
+                        <div><dt>model</dt><dd>model name<div>string</div></dd></div>
+                        <div><dt>scope</dt><dd>context<div>string or object reference</div></dd></div>
+                        <div><dt>key</dt><dd>unique key<div>string</div></dd></div>
+                        <div><dt>atomic</dt><dd>atomic update mode (changes in child objects cause the change of the whole object)<div>true / false</div></dd></div>
+                        <div><dt>value</dt><dd>initial value<div>any</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.remove(model [, scope] [, unset])</div>
+                  <div><p>Remove object from the models list</p>
+                     <div>
+                        <div><dt>model</dt><dd>model name<div>string</div></dd></div>
+                        <div><dt>scope</dt><dd>context<div>string or object reference</div></dd></div>
+                        <div><dt>unset</dt><dd>if true the object will be removed completely, otherwise just the watching of its state will be stopped<div>true / false</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.pull(model [, scope] [, update] [, url] [, key])</div>
+                  <div><p>Update model based on the data in input elements</p>
+                     <div>
+                        <div><dt>model</dt><dd>model name<div>string</div></dd></div>
+                        <div><dt>scope</dt><dd>context<div>string or object reference</div></dd></div>
+                        <div><dt>update</dt><dd>if true the update of all elements connected to the model will be triggered<div>true / false</div></dd></div>
+                        <div><dt>url</dt><dd>URL on the server for sending the updated value<div>URL</div></dd></div>
+                        <div><dt>key</dt><dd>unique key<div>string</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.update(model [, scope] [, key])</div>
+                  <div><p>Force update of all elements connected to the model</p>
+                     <div>
+                        <div><dt>model</dt><dd>model name<div>string</div></dd></div>
+                        <div><dt>scope</dt><dd>context<div>string or object reference</div></dd></div>
+                        <div><dt>key</dt><dd>unique key<div>string</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.setBefore(model, func, scope)</div>
+                  <div><p>Register a new before DOM update hook. To register a global hook model must be an empty string</p>
+                     <div>
+                        <div><dt>model</dt><dd>model name<div>string</div></dd></div>
+                        <div><dt>scope</dt><dd>context<div>string or object reference</div></dd></div>
+                        <div><dt>func</dt><dd>user function<div>function</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.setAfter(model, func, scope)</div>
+                  <div><p>Register a new after DOM update hook. To register a global hook model must be an empty string</p>
+                     <div>
+                        <div><dt>model</dt><dd>model name<div>string</div></dd></div>
+                        <div><dt>scope</dt><dd>context<div>string or object reference</div></dd></div>
+                        <div><dt>func</dt><dd>user function<div>function</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.addEvent(el, type, func, scope, value_key, keep)</div>
+                  <div><p>Event handler registration</p>
+                     <div>
+                        <div><dt>el</dt><dd>element<div>DOM element</div></dd></div>
+                        <div><dt>type</dt><dd>event type<div>string</div></dd></div>
+                        <div><dt>func</dt><dd>user function<div>function</div></dd></div>
+                        <div><dt>scope</dt><dd>context<div>string or object reference</div></dd></div>
+                        <div><dt>value_key</dt><dd>key of the model property inside the context<div>string</div></dd></div>
+                        <div><dt>keep</dt><dd>if true, any other handlers of the same type will not be removed<div>true / false</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.removeEvent(el, type, func)</div>
+                  <div><p>Event handler removal</p>
+                     <div>
+                        <div><dt>el</dt><dd>element<div>DOM element</div></dd></div>
+                        <div><dt>type</dt><dd>event type<div>string</div></dd></div>
+                        <div><dt>func</dt><dd>user function<div>function</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.embedObject(context, str)</div>
+                  <div><p>Embed registration</p>
+                     <div>
+                        <div><dt>context</dt><dd>context of the source and destination models<div>string or object reference</div></dd></div>
+                        <div><dt>str</dt><dd>string in the following format:<br>
+                        <code>path.to.source:id -> path.to.dest:ref_id:field</code><br>
+                        or<br>
+                        <code>path.to.source:id -> path.to.dest:ref_id:[field1 > new_field1 , field2 > new_field2]</code><div>string</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+               <div class="method">
+                  <div class="code">as.removeEmbed(context, str, keep)</div>
+                  <div><p>Embed removal</p>
+                     <div>
+                        <div><dt>context</dt><dd>context of the source and destination models<div>string or object reference</div></dd></div>
+                        <div><dt>str</dt><dd>string in the following format:<br>
+                        <code>path.to.source:id -> path.to.dest:ref_id:field</code><br>
+                        or<br>
+                        <code>path.to.source:id -> path.to.dest:ref_id:[field1 > new_field1 , field2 > new_field2]</code><div>string</div></dd></div>
+                        <div><dt>keep</dt><dd>if true, the watching will be stopped, but the embeds will not be deleted<div>true / false</div></dd></div>
+                     </div>
+                  </div>
+               </div>
+            </content>
+         </section>
+      </article>
+      <nav class="footer" id="footer"><a href="">Back</a><a href="">Next</a></nav>
+   </div>
+</body>
+</html>

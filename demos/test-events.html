@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Autosync</title>
+<script type="text/javascript" src="../autosync.js"></script>
+<script type="text/javascript">
+
+window.data = { count: 1 }
+
+function getWord(n, word) {
+   if (isNaN(parseInt(n))) return ''
+   if (word == 'яблок') {
+      if (n % 10 == 0 || n % 10 > 4 || n >= 11 && n <= 19) return n + ' ' + word
+      else if (n % 10 > 1 && n % 10 <= 4) return n + ' ' + word + 'а'
+      else if (n % 10 == 1) return n + ' ' + word + 'о'
+   }
+   else if (word == 'апельсин') {
+      if (n % 10 == 0 || n % 10 > 4 || n >= 11 && n <= 19) return n + ' ' + word + 'ов'
+      else if (n % 10 > 1 && n % 10 <= 4) return n + ' ' + word + 'а'
+      else if (n % 10 == 1) return n + ' ' + word
+   }
+}
+
+function init() {
+   as.addEvent(document.body.children[0], 'click', 'alert(getWord(value.count, \'яблок\')); value.count++', data)
+   as.add('data', 'window')
+}
+
+</script>
+<style>body { overflow: hidden } body, input, textarea { font-family: Tahoma; font-size: 15px; } p { min-height: 20px; margin-top: 3px; }</style>
+</head>
+
+<body onload="init()">
+   <div style="width: 100vw; height: 100vh"></div>
+</body>
+</html>
