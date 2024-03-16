@@ -1831,7 +1831,7 @@ function renderTemplate(el, val, scope, _scope, args) {
             var result = ''
             for (var j = 0; j < hints.add.length; j++) {
                var i = hints.add[j]
-               result += f(el, val[i]).replace(/\s+$/, '').replace('{$index}', i+1).replace('{\\$index}', '{$index}')
+               result += f(el, val[i], i).replace(/\s+$/, '').replace('{$index}', i+1).replace('{\\$index}', '{$index}')
             }
             var b = document.createElement('div')
             b.style.display = 'none'
@@ -1850,7 +1850,7 @@ function renderTemplate(el, val, scope, _scope, args) {
                return el.innerHTML
             }
          } else if (hints && hints.index !== undefined) {
-            var result = f(el, val[hints.index]).replace(/\s+$/, '').replace('{$index}', i+1).replace('{\\$index}', '{$index}')
+            var result = f(el, val[hints.index], hints.index).replace(/\s+$/, '').replace('{$index}', i+1).replace('{\\$index}', '{$index}')
             
             var b = document.createElement('div')
             b.style.display = 'none'
