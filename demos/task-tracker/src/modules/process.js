@@ -23,7 +23,7 @@ function processCSS(el, val, index, post) {
          var s2 = classes[i].slice(p2+1).trim()
          var result = s2
          try {
-            if (eval('var $value, $index, now; now = window.now; $value = ' + JSON.stringify(val) + ', $index = ' + (index !== undefined ? parseInt(index) : -1) + ',' + calcDates(cond))) {
+            if (eval('now = window.now; $value = ' + JSON.stringify(val) + ', $index = ' + (index !== undefined ? parseInt(index)+1 : -1) + ',' + calcDates(cond))) {
                result = s1
             }
          } catch (ex) {}
@@ -32,7 +32,7 @@ function processCSS(el, val, index, post) {
             el.classList.add(c[i])
          }
       }
-      el.setAttribute('asclasses', delayed.join(' , '))
+      if (post !== 'self') el.setAttribute('asclasses', delayed.join(' , '))
    }
    // Process inline styles
    if (el.getAttribute('asstyles') !== null) {
@@ -55,13 +55,19 @@ function processCSS(el, val, index, post) {
          var s2 = styles[i].slice(p2+1).trim()
          var result = s2
          try {
-            if (eval('var $value, $index, now; now = window.now; $value = ' + JSON.stringify(val) + ', $index = ' + (index !== undefined ? parseInt(index) : -1) + ', ' + calcDates(cond))) {
+            if (eval('now = window.now; $value = ' + JSON.stringify(val) + ', $index = ' + (index !== undefined ? parseInt(index)+1 : -1) + ', ' + calcDates(cond))) {
                result = s1
             }
          } catch (ex) {}
-         if (result.length) el.setAttribute('style', (el.getAttribute('style') ? el.getAttribute('style') + ' ' : '') + result)
+         if (result.length || el.getAttribute('style') != null) {
+            if (post === 'self' && !result.length) {
+               el.removeAttribute('style')
+            } else {
+               el.setAttribute('style', (post !== 'self' && el.getAttribute('style') ? el.getAttribute('style') + ' ' : '') + result)
+            }
+         }
       }
-      el.setAttribute('asstyles', delayed.join(' ,, '))
+      if (post !== 'self') el.setAttribute('asstyles', delayed.join(' ,, '))
    }
 }
 
@@ -138,6 +144,9 @@ function processInputValue(el) {
 }
 
 function postProcessConditions(el, _val, prop, module, scope, _scope, key, hints, index) {
+   
+   processCSS(el, _val, index, 'self')
+   processAttrs(el, _val, index, true)
    
    var n = el.children.length / (_val && _val.length || 1)
    

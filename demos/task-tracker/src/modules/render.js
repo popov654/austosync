@@ -248,7 +248,7 @@ export function renderTemplate(el, val, scope, _scope, args) {
          el.getAttribute('asmodel') + '#' + el.getAttribute('askey') :
          el.getAttribute('asmodel')
       
-      var hints = as.hints[_key]
+      var hints = args[1] && args[1] == el.getAttribute('asmodel') ? args[5] : as.hints[_key]
       
       if (el.getAttribute('aslist') !== null && val && val instanceof Array) {
          var range = [0, val.length-1]
@@ -258,7 +258,7 @@ export function renderTemplate(el, val, scope, _scope, args) {
             var result = ''
             for (var j = 0; j < hints.add.length; j++) {
                var i = hints.add[j]
-               result += f(el, val[i]).replace(/\s+$/, '').replace('{$index}', i).replace('{\\$index}', '{$index}')
+               result += f(el, val[i]).replace(/\s+$/, '').replace('{$index}', i+1).replace('{\\$index}', '{$index}')
             }
             var b = document.createElement('div')
             b.style.display = 'none'
@@ -277,7 +277,7 @@ export function renderTemplate(el, val, scope, _scope, args) {
                return el.innerHTML
             }
          } else if (hints && hints.index !== undefined) {
-            var result = f(el, val[hints.index]).replace(/\s+$/, '').replace('{$index}', i).replace('{\\$index}', '{$index}')
+            var result = f(el, val[hints.index]).replace(/\s+$/, '').replace('{$index}', i+1).replace('{\\$index}', '{$index}')
             
             var b = document.createElement('div')
             b.style.display = 'none'

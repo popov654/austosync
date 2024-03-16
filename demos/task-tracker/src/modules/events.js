@@ -6,6 +6,7 @@ function addInputEvents(el, val, module, scope, index) {
    for (var i = 0; i < els.length; i++) {
       if (els[i].hasInputHandler) continue
       addEventHandler(els[i], 'change', function() {
+         var module = this.getAttribute('asmodel') || module
          var key = module.split('.').pop()
          var val = findValue(scope, module.split('.').slice(0, -1).join('.'))
          val[key] = this.type.match(/^checkbox|radio$/) ? this.checked : this.value

@@ -703,6 +703,11 @@ function processElement(el, data, module, scope, _scope, key, hints, parent_val,
       } else {
          el.innerHTML = s
       }
+      
+      processEventsRecursive(el, val, module, scope, index)
+      addCustomEvents(el, val, module, scope, index)
+      postProcessConditions(el, val, module, scope, _scope, key, hints, index)
+      
       el.asprocessedtime = +(new Date())
       if (hints.stack) hints.stack.pop()
       return

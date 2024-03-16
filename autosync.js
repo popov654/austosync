@@ -844,6 +844,10 @@ function processElement(el, data, module, scope, _scope, key, hints, parent_val,
       } else {
          el.innerHTML = s
       }
+      processEventsRecursive(el, val, module, scope, index)
+      addCustomEvents(el, val, module, scope, index)
+      postProcessConditions(el, val, module, scope, _scope, key, hints, index)
+      
       el.asprocessedtime = +(new Date())
       if (hints.stack) hints.stack.pop()
       return
@@ -952,6 +956,9 @@ function cleanupTemplates(el) {
 
 function postProcessConditions(el, _val, prop, module, scope, _scope, key, hints, index) {
    
+   processCSS(el, _val, index, 'self')
+   processAttrs(el, _val, index, true)
+   
    var n = el.children.length / (_val && _val.length || 1)
    
    for (var i = 0; i < el.children.length; i++) {
@@ -1002,6 +1009,7 @@ function addInputEvents(el, val, module, scope, index) {
    for (var i = 0; i < els.length; i++) {
       if (els[i].hasInputHandler) continue
       addEventHandler(els[i], 'change', function() {
+         var module = this.getAttribute('asmodel') || module
          var key = module.split('.').pop()
          var val = findValue(scope, module.split('.').slice(0, -1).join('.'))
          val[key] = this.type.match(/^checkbox|radio$/) ? this.checked : this.value
@@ -1813,7 +1821,7 @@ function renderTemplate(el, val, scope, _scope, args) {
          el.getAttribute('asmodel') + '#' + el.getAttribute('askey') :
          el.getAttribute('asmodel')
       
-      var hints = as.hints[_key]
+      var hints = args[1] && args[1] == el.getAttribute('asmodel') ? args[5] : as.hints[_key]
       
       if (el.getAttribute('aslist') !== null && val && val instanceof Array) {
          var range = [0, val.length-1]
@@ -1823,7 +1831,7 @@ function renderTemplate(el, val, scope, _scope, args) {
             var result = ''
             for (var j = 0; j < hints.add.length; j++) {
                var i = hints.add[j]
-               result += f(el, val[i]).replace(/\s+$/, '').replace('{$index}', i).replace('{\\$index}', '{$index}')
+               result += f(el, val[i]).replace(/\s+$/, '').replace('{$index}', i+1).replace('{\\$index}', '{$index}')
             }
             var b = document.createElement('div')
             b.style.display = 'none'
@@ -1842,7 +1850,7 @@ function renderTemplate(el, val, scope, _scope, args) {
                return el.innerHTML
             }
          } else if (hints && hints.index !== undefined) {
-            var result = f(el, val[hints.index]).replace(/\s+$/, '').replace('{$index}', i).replace('{\\$index}', '{$index}')
+            var result = f(el, val[hints.index]).replace(/\s+$/, '').replace('{$index}', i+1).replace('{\\$index}', '{$index}')
             
             var b = document.createElement('div')
             b.style.display = 'none'
@@ -1976,7 +1984,7 @@ function processCSS(el, val, index, post) {
          var s2 = classes[i].slice(p2+1).trim()
          var result = s2
          try {
-            if (eval('now = window.now; $value = ' + JSON.stringify(val) + ', $index = ' + (index !== undefined ? parseInt(index) : -1) + ',' + calcDates(cond))) {
+            if (eval('now = window.now; $value = ' + JSON.stringify(val) + ', $index = ' + (index !== undefined ? parseInt(index)+1 : -1) + ',' + calcDates(cond))) {
                result = s1
             }
          } catch (ex) {}
@@ -1985,7 +1993,7 @@ function processCSS(el, val, index, post) {
             el.classList.add(c[i])
          }
       }
-      el.setAttribute('asclasses', delayed.join(' , '))
+      if (post !== 'self') el.setAttribute('asclasses', delayed.join(' , '))
    }
    // Process inline styles
    if (el.getAttribute('asstyles') !== null) {
@@ -2008,13 +2016,19 @@ function processCSS(el, val, index, post) {
          var s2 = styles[i].slice(p2+1).trim()
          var result = s2
          try {
-            if (eval('now = window.now; $value = ' + JSON.stringify(val) + ', $index = ' + (index !== undefined ? parseInt(index) : -1) + ', ' + calcDates(cond))) {
+            if (eval('now = window.now; $value = ' + JSON.stringify(val) + ', $index = ' + (index !== undefined ? parseInt(index)+1 : -1) + ', ' + calcDates(cond))) {
                result = s1
             }
          } catch (ex) {}
-         if (result.length) el.setAttribute('style', (el.getAttribute('style') ? el.getAttribute('style') + ' ' : '') + result)
+         if (result.length || el.getAttribute('style') != null) {
+            if (post === 'self' && !result.length) {
+               el.removeAttribute('style')
+            } else {
+               el.setAttribute('style', (post !== 'self' && el.getAttribute('style') ? el.getAttribute('style') + ' ' : '') + result)
+            }
+         }
       }
-      el.setAttribute('asstyles', delayed.join(' ,, '))
+      if (post !== 'self') el.setAttribute('asstyles', delayed.join(' ,, '))
    }
 }
 
