@@ -407,7 +407,7 @@ function createProxy(val, module, _scope, scope, root, key) {
 
          set: function(val){
             value = val;
-            if (val != +val && !val.charAt && val instanceof Object) {
+            if (val != +val && !val.charAt && val instanceof Object || val instanceof Array) {
                createProxy(val, module, _scope, scope, root);
             }
             
@@ -425,7 +425,7 @@ function createProxy(val, module, _scope, scope, root, key) {
    } else if ('__defineSetter__' in scope) {
       scope.__defineSetter__(module.split('.').pop(), function(val) {
          value = val;
-         if (val != +val && !val.charAt && val instanceof Object) {
+         if (val != +val && !val.charAt && val instanceof Object || val instanceof Array) {
             createProxy(val, module, _scope, scope, root);
          }
          
